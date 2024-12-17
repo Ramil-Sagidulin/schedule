@@ -1,8 +1,57 @@
-.calendar{
+.calendar {
     display: flex;
-    width: 100vw;
-    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    margin: auto;
+
 }
-.dayOfTheWeek{
+
+.month {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 20px;
+}
+
+.weekdays, .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%;
+    text-align: center;
+}
+
+.dayOfTheWeek {
+    background-color: #f1f1f1;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+
+
+.day:hover {
+    background-color: #e6e6e6;
+    cursor: pointer;
+}
+
+.empty {
+    background-color: #f9f9f9;
+}
+
+.day {
+    padding: 5px;
+    background-color: #ffffff;
+}
+.buttonBox{
     display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.button{
+    margin-top: 20px;
+    padding: 5px;
+    width: 100px;
+}
+.currentDay{
+    background-color: #c2c2c2;
 }
