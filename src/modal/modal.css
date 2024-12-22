@@ -35,3 +35,6 @@
 .modal__button{
     margin-left: 20px;
 }
+.button-dn{
+    display: none;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import '../ calendar/calendar.css';
 import Modal from "../modal/modal";
 
@@ -17,6 +17,10 @@ function Calendar() {
     let lastDayOfMonth = new Date(currentYear, currentMonth, daysInMonth).getDay();
     let [eventInformation, setEventInformation] = useState({});
     let [eventKey, setEventKey] = useState();
+    let toDate = new Date()
+    let toYear = toDate.getFullYear();
+    let toMonth = toDate.getMonth();
+    let toDay = toDate.getDate();
     firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     lastDayOfMonth = lastDayOfMonth === 0 ? 6 : lastDayOfMonth - 1;
     let daysArray = [];
@@ -27,7 +31,8 @@ function Calendar() {
     for (let i = 1; i <= daysInMonth; i++) {
         let dayKey = `${i}-${currentMonth}-${currentYear}`;
         daysArray.push(
-            <div className={i === currentDay ? 'day currentDay' : (dayKey in eventInformation ? 'day eventDay' : 'day')} onClick={() => event(i)} key={i}>
+            <div draggable={true} onDragStart={()=>dragStart(dayKey)} onDragOver={() => {}} onDrop={()=>dragDrop(dayKey)} className={dayKey === `${toDay}-${toMonth}-${toYear}` ? 'day currentDay' : (dayKey in eventInformation ? 'day eventDay' : 'day')}
+                 onClick={() => event(i)} key={i}>
                 {i}
             </div>
         );
@@ -35,33 +40,48 @@ function Calendar() {
     for (let i = lastDayOfMonth + 1; i < 7; i++) {
         daysArray.push(<div className='empty' key={`empty-end-${i}`}></div>);
     }
+    let [eInfo,setEInfo]=useState('')
+    function dragStart(day) {
+        setEInfo(eventInformation[day])
+        delete eventInformation[day]
 
+    }
+    console.log(eInfo)
+    function dragDrop(day){
+        console.log('--- drag end')
+        setEventInformation((prev)=>({...prev,[day]:eInfo}))
+    }
     function event(day) {
         let key = `${day}-${currentMonth}-${currentYear}`;
         setEventKey(key);
-        if (eventInformation[key]) {
-            setEventDetailsModalState(true);
-        } else {
-            setModalWindowState(true);
+        if (new Date(currentYear, currentMonth, day).getTime() > toDate.getTime()) {
+            if (eventInformation[key]) {
+                setEventDetailsModalState(true);
+            } else {
+                setModalWindowState(true);
+            }
         }
+        setModalInputValue('')
     }
 
     function addNewEvent() {
-        setEventInformation((prevState) => ({ ...prevState, [eventKey]: modalInputValue }));
+        setEventInformation((prevState) => ({...prevState, [eventKey]: modalInputValue}));
         setModalWindowState(false);
     }
 
     function changeMonth(month) {
         setCurrentDate(new Date(currentYear, currentMonth + month, 1))
     }
-
     return (
         <div className='calendar'>
             <Modal open={modalWindowState} close={() => setModalWindowState(false)}>
                 <div>
                     <div className='modal__title'>Добавить новое событие</div>
-                    <input className='modal__input' onChange={(event) => setModalInputValue(event.target.value)}></input>
-                    <button className='modal__button' onClick={() => addNewEvent()}>Добавить</button>
+                    <input className='modal__input'
+                           onChange={(event) => setModalInputValue(event.target.value)}></input>
+                    <button disabled={modalInputValue === '' ? true : false} className='modal__button'
+                            onClick={() => addNewEvent()}>Добавить
+                    </button>
                 </div>
             </Modal>
 
