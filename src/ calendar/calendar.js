@@ -24,14 +24,15 @@ function Calendar() {
     firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     lastDayOfMonth = lastDayOfMonth === 0 ? 6 : lastDayOfMonth - 1;
     let daysArray = [];
-
     for (let i = 0; i < firstDayOfMonth; i++) {
         daysArray.push(<div className='empty' key={`empty-start-${i}`}></div>);
     }
     for (let i = 1; i <= daysInMonth; i++) {
         let dayKey = `${i}-${currentMonth}-${currentYear}`;
         daysArray.push(
-            <div draggable={true} onDragStart={()=>dragStart(dayKey)} onDragOver={() => {}} onDrop={()=>dragDrop(dayKey)} className={dayKey === `${toDay}-${toMonth}-${toYear}` ? 'day currentDay' : (dayKey in eventInformation ? 'day eventDay' : 'day')}
+            <div draggable={true} onDragStart={()=>dragStart(dayKey)}
+                 onDragOver={(event) => (event.preventDefault())}
+                 onDrop={()=>dragDrop(i, dayKey)} className={dayKey === `${toDay}-${toMonth}-${toYear}` ? 'day currentDay' : (dayKey in eventInformation ? 'day eventDay' : 'day')}
                  onClick={() => event(i)} key={i}>
                 {i}
             </div>
@@ -42,14 +43,16 @@ function Calendar() {
     }
     let [eInfo,setEInfo]=useState('')
     function dragStart(day) {
-        setEInfo(eventInformation[day])
-        delete eventInformation[day]
-
+            setEInfo(eventInformation[day])
+            delete eventInformation[day]
     }
-    console.log(eInfo)
-    function dragDrop(day){
-        console.log('--- drag end')
-        setEventInformation((prev)=>({...prev,[day]:eInfo}))
+
+
+    function dragDrop(i, day){
+        if(eInfo && new Date(currentYear, currentMonth, i).getTime() > toDate.getTime()){
+            console.log('--- drag end')
+            setEventInformation((prev)=>({...prev,[day]:eInfo}))
+        }
     }
     function event(day) {
         let key = `${day}-${currentMonth}-${currentYear}`;
